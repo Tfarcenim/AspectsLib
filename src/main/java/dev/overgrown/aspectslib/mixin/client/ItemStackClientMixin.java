@@ -16,13 +16,12 @@ import java.util.Optional;
 
 @Environment(EnvType.CLIENT)
 @Mixin(ItemStack.class)
-public abstract class ItemStackClientMixin implements IAspectDataProvider{
+public abstract class ItemStackClientMixin {
 
     @Inject(method = "getTooltipData", at = @At("HEAD"), cancellable = true)
     private void addAspectTooltipData(CallbackInfoReturnable<Optional<TooltipData>> cir) {
-        ItemStack stack = (ItemStack) (Object) this;
-        IAspectDataProvider copyProvider = (IAspectDataProvider) (Object) stack;
-        AspectData aspectData = copyProvider.aspectslib$getAspectData();
+        IAspectDataProvider provider = (IAspectDataProvider) this;
+        AspectData aspectData = provider.aspectslib$getAspectData();
 
         if (aspectData == null || aspectData.isEmpty()) {
             return;

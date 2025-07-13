@@ -19,6 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
+import java.util.Objects;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements IAspectDataProvider {
@@ -40,11 +41,7 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
             aspectslib$aspectDataInitialized = true;
         }
 
-        if (aspectslib$cachedAspectData == null) {
-            return AspectData.DEFAULT;
-        }
-
-        return aspectslib$cachedAspectData;
+        return Objects.requireNonNullElse(aspectslib$cachedAspectData, AspectData.DEFAULT);
     }
 
     @Override
@@ -52,14 +49,17 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         aspectslib$cachedAspectData = data;
         aspectslib$aspectDataInitialized = true;
 
-        if (data != null && !data.isEmpty()) {
-            NbtCompound nbt = getOrCreateNbt();
-            nbt.put("AspectsLibData", data.toNbt());
-        } else {
-            NbtCompound nbt = getNbt();
+        // Null-safe data handling
+        NbtCompound nbt = getNbt();
+        if (data == null) {
             if (nbt != null) {
                 nbt.remove("AspectsLibData");
+                if (nbt.isEmpty()) {
+                    ((ItemStack) (Object) this).setNbt(null);
+                }
             }
+        } else if (!data.isEmpty()) {
+            getOrCreateNbt().put("AspectsLibData", data.toNbt());
         }
     }
 
@@ -72,8 +72,8 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         }
 
         AspectData aspectData = new AspectData(new Object2IntOpenHashMap<>());
-
         Identifier itemId = Registries.ITEM.getId(getItem());
+        ItemStack self = (ItemStack) (Object) this; // Use self for registry entry
 
         if (ItemAspectRegistry.contains(itemId)) {
             aspectData = aspectData.addAspect(ItemAspectRegistry.get(itemId));
@@ -88,7 +88,7 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
             }
             
             TagKey<Item> tagKey = TagKey.of(Registries.ITEM.getKey(), id);
-            if (getItem().getRegistryEntry().isIn(tagKey)) {
+            if (self.getRegistryEntry().isIn(tagKey)) {
                 aspectData = aspectData.addAspect(itemAspectData);
             }
         }
@@ -107,7 +107,9 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         ItemStack copy = cir.getReturnValue();
         if (aspectslib$cachedAspectData != null && !aspectslib$cachedAspectData.isEmpty()) {
             IAspectDataProvider copyProvider = (IAspectDataProvider) (Object) copy;
-            copyProvider.aspectslib$setAspectData(aspectslib$cachedAspectData);
+            if (copyProvider != null) {
+                copyProvider.aspectslib$setAspectData(aspectslib$cachedAspectData);
+            }
         }
     }
 }
