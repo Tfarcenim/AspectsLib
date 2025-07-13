@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:vacuos_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:glass_bottle",
 			"required": false

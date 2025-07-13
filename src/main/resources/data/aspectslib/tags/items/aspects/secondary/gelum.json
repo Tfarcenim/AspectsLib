@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:gelum_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:ice",
 			"required": false

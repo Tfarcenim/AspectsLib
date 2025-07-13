@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
         {
-            "id":"aspectslib:aversio_aspect_shard",
-            "required":false
-        },
-        {
             "id": "#minecraft:arrows",
             "required": false
         },

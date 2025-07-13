@@ -15,9 +15,7 @@ public class AspectsLib implements ModInitializer {
 	public static final String MOD_ID = "aspectslib";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
-	private static AspectManager aspectManager;
-
-	public static Identifier identifier(String path) {
+    public static Identifier identifier(String path) {
 		return new Identifier(MOD_ID, path);
 	}
 
@@ -34,7 +32,7 @@ public class AspectsLib implements ModInitializer {
 		});
 
 
-		aspectManager = new AspectManager();
+        AspectManager aspectManager = new AspectManager();
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(aspectManager);
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new CustomItemTagManager());
 

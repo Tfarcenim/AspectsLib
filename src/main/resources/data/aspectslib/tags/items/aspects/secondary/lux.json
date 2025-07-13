@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:lux_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:glowstone",
 			"required": false

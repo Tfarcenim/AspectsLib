@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:spiritus_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:ghast_tear",
 			"required": false

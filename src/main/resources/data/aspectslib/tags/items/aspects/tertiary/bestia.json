@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:bestia_aspect_shard",
-			"required":false
-		},
         {
 			"id": "#minecraft:wool",
 			"required": false

@@ -86,7 +86,7 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
             if (itemId.equals(id)) {
                 aspectData = aspectData.addAspect(itemAspectData);
             }
-            
+
             TagKey<Item> tagKey = TagKey.of(Registries.ITEM.getKey(), id);
             if (self.getRegistryEntry().isIn(tagKey)) {
                 aspectData = aspectData.addAspect(itemAspectData);

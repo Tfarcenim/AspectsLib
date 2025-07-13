@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:aqua_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:wet_sponge",
 			"required": false

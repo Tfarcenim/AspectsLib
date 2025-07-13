@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:herba_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:grass_block",
 			"required": false

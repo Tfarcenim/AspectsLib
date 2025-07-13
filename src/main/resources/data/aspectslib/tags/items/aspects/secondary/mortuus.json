@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:mortuus_aspect_shard",
-			"required":false
-		},
         {
 			"id": "#minecraft:skulls",
 			"required": false

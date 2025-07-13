@@ -2,14 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:aer_aspect_shard",
-			"required":false
-		},
-		{
-			"id":"aspectslib:aer_crystal_cluster",
-			"required":false
-		},
-		{
 			"id": "minecraft:wind_charge",
 			"required": false
 		},

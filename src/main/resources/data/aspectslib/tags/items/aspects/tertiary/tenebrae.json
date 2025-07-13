@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:tenebrae_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:bedrock",
 			"required": false

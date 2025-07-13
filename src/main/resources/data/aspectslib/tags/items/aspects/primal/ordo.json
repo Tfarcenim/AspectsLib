@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:ordo_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "minecraft:chiseled_sandstone",
 			"required": false
 		},

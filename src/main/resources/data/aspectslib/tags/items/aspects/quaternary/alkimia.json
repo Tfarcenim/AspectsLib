@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:alkimia_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "minecraft:nether_wart_block",
 			"required": false
 		},

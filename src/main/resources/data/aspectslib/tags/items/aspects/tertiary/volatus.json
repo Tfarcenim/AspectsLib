@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:volatus_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:feather",
 			"required": false

@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:vinculum_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:sponge",
 			"required": false

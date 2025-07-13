@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-      {
-        "id":"aspectslib:cognitio_aspect_shard",
-        "required":false
-      },
         {
             "id": "#minecraft:bookshelf_books",
             "required": false

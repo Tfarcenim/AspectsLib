@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-      {
-        "id":"aspectslib:auram_aspect_shard",
-        "required":false
-      },
         {
             "id": "minecraft:beacon",
             "required": false

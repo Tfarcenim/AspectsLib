@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:sensus_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "#minecraft:lapis_ores",
 			"required": false
 		},

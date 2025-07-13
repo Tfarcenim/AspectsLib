@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:instrumentum_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "minecraft:flint",
 			"required": false
 		},

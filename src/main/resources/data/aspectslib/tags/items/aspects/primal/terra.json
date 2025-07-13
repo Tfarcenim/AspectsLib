@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:terra_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "#minecraft:dirt",
 			"required": false
 		},

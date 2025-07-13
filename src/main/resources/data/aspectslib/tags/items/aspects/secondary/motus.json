@@ -1,10 +1,6 @@
 {
     "replace": false,
     "values": [
-		{
-			"id":"aspectslib:motus_aspect_shard",
-			"required":false
-		},
         {
 			"id": "minecraft:piston",
 			"required": false

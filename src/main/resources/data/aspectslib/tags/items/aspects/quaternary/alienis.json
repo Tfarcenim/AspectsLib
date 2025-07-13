@@ -2,10 +2,6 @@
     "replace": false,
     "values": [
 		{
-			"id":"aspectslib:alienis_aspect_shard",
-			"required":false
-		},
-		{
 			"id": "minecraft:purpur_block",
 			"required": false
 		},
