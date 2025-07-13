@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:power_resonance_modifier",
+      "required": false
+    },
+    {
+      "id": "aspectslib:simple_resonance_modifier",
+      "required": false
+    },
+    {
+      "id": "aspectslib:scatter_resonance_modifier",
+      "required": false
+    }
+  ]
+}

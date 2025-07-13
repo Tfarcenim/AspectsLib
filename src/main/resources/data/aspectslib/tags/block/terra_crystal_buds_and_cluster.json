@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_terra_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_terra_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_terra_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_terra_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:terra_crystal_cluster",
+      "required": false
+    }
+  ]
+}

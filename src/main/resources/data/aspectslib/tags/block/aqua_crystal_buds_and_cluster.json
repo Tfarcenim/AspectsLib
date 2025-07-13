@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_aqua_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_aqua_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_aqua_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_aqua_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:aqua_crystal_cluster",
+      "required": false
+    }
+  ]
+}

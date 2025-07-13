@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_ignis_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_ignis_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_ignis_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_ignis_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:ignis_crystal_cluster",
+      "required": false
+    }
+  ]
+}

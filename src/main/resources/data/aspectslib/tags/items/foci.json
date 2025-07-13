@@ -1,0 +1,17 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:lesser_foci",
+      "required": false
+    },
+    {
+      "id": "aspectslib:advanced_foci",
+      "required": false
+    },
+    {
+      "id": "aspectslib:greater_foci",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_perditio_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_perditio_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_perditio_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_perditio_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:perditio_crystal_cluster",
+      "required": false
+    }
+  ]
+}

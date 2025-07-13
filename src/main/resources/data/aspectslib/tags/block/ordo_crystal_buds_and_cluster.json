@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_ordo_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_ordo_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_ordo_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_ordo_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:ordo_crystal_cluster",
+      "required": false
+    }
+  ]
+}

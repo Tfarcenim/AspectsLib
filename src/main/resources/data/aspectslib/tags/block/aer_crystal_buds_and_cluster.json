@@ -1,0 +1,25 @@
+{
+  "replace": false,
+  "values": [
+    {
+      "id": "aspectslib:budding_aer_crystal",
+      "required": false
+    },
+    {
+      "id": "aspectslib:small_aer_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:medium_aer_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:large_aer_crystal_bud",
+      "required": false
+    },
+    {
+      "id": "aspectslib:aer_crystal_cluster",
+      "required": false
+    }
+  ]
+}
