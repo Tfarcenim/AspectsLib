@@ -1,6 +1,7 @@
 package dev.overgrown.aspectslib.mixin.client;
 
 import dev.overgrown.aspectslib.api.IAspectDataProvider;
+import dev.overgrown.aspectslib.client.tooltip.AspectTooltipComponent;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipData;
 import dev.overgrown.aspectslib.data.AspectData;
 import net.fabricmc.api.EnvType;
@@ -14,6 +15,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
+/**
+ * Client-side mixin to provide aspect tooltip data.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ * <li>Attach AspectTooltipData to items with aspects</li>
+ * </ol>
+ * <p>
+ * Important Connections:
+ * <li>{@link IAspectDataProvider}: Source of aspect data</li>
+ * <li>{@link AspectTooltipComponent}: Renders the tooltip</li>
+ */
 @Environment(EnvType.CLIENT)
 @Mixin(ItemStack.class)
 public abstract class ItemStackClientMixin {

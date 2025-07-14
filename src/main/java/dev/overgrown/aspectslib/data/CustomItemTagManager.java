@@ -21,7 +21,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * This class populates the ItemAspectRegistry, with default integer values for different aspects.
+ * This class populates the ItemAspectRegistry, with default integer values for different aspects and loads item-aspect associations from datapacks.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ * <li>Loads item tags from data/aspectslib/tags/items</li>
+ * <li>Populates ItemAspectRegistry</li>
+ * </ol>
+ * </p>
+ * Dependencies: Runs after AspectManager
  */
 public class CustomItemTagManager extends JsonDataLoader implements IdentifiableResourceReloadListener {
 

@@ -1,13 +1,41 @@
 package dev.overgrown.aspectslib.data;
 
+import dev.overgrown.aspectslib.mixin.ItemStackMixin;
 import net.minecraft.util.Identifier;
 
 import java.util.*;
 import java.util.stream.Stream;
 
 /**
- * This class pairs AspectData to Identifiers, used in applying custom AspectData to items based on the items
- * Identifier.
+ * This class pairs AspectData to Identifiers, used in applying custom AspectData to items based on the item's identifier.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ * <li>Stores default aspect data for items and tags</li>
+ * <li>Provides lookup for item aspects</li>
+ * </ol>
+ * </p>
+ * <p>
+ * Usage:
+ * <li>Populated by {@link CustomItemTagManager} from datapacks</li>
+ * <li>Accessed by {@link ItemStackMixin} during aspect initialization</li>
+ * </p>
+ * <br>
+ * Example datapack entry (data/aspectslib/tags/items/aspects.json):
+ * <pre>{@code
+ * {
+ *   "replace": false,
+ *   "values": [
+ *     {
+ *       "id": "minecraft:diamond",
+ *       "aspects": {
+ *         "aspectslib:terra": 10,
+ *         "aspectslib:vitreus": 5
+ *       }
+ *     }
+ *   ]
+ * }
+ * }</pre>
  */
 public class ItemAspectRegistry {
 

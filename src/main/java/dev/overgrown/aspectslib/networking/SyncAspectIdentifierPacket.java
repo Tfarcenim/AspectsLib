@@ -14,7 +14,26 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This packet syncs both the aspect name mappings and the actual aspect data from server to client.
+ * This packet synchronizes both the aspect name mappings and the actual aspect data from server to client.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ *     <li>Serialize/deserialize aspect data for network transmission</li>
+ *     <li>Send aspect registry to clients/li>
+ * </ol>
+ * </p>
+ * <p>
+ * Usage:
+ * <li>Called during player join (see AspectsLib.java)</li>
+ * <li>Used internally by library</li>
+ * </p>
+ * <br>
+ * <p>
+ * Important Connections:
+ * <li>{@link AspectsLib}: Main mod class triggers sending</li>
+ * <li>{@link ModRegistries}: Source of aspect data</li>
+ * <li>{@link Aspect}: Aspect serialization logic</li>
+ * </p>
  */
 public class SyncAspectIdentifierPacket {
     public static final Identifier ID = AspectsLib.identifier("sync_aspect_packet");
@@ -78,7 +97,7 @@ public class SyncAspectIdentifierPacket {
     }
 
     /**
-     * Sends the full aspect data (names + aspects) from server to client
+     * Sends the full aspect data (names + aspects) from server to client (Send full data to specific player)
      */
     public static void sendFullData(ServerPlayerEntity player, Map<String, Identifier> nameMap, Map<Identifier, Aspect> aspectMap) {
         PacketByteBuf buf = PacketByteBufs.create();
@@ -87,7 +106,7 @@ public class SyncAspectIdentifierPacket {
     }
 
     /**
-     * Sends all current aspect data from server to client
+     * Sends all current aspect data from server to client (Send current registry data to player)
      */
     public static void sendAllData(ServerPlayerEntity player) {
         AspectsLib.LOGGER.debug("Sending {} aspects and {} name mappings to client", 

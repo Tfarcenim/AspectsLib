@@ -7,10 +7,18 @@ import com.mojang.serialization.DynamicOps;
 
 import java.util.function.Supplier;
 
+/**
+ * Utility class for advanced codec operations.
+ * <p>
+ * Provides:
+ * <li>Alternative codec support</li>
+ * <li>Lazy codec initialization</li>
+ * </p>
+ */
 public class CodecUtils {
 
     /**
-     * Implementation of withAlternative for 1.20.1 - creates a codec that tries alternative on decode failure
+     * Create codec that tries primary then alternative on decode failure
      */
     public static <A> Codec<A> withAlternative(Codec<A> primary, Codec<A> alternative) {
         return new Codec<A>() {
@@ -41,7 +49,7 @@ public class CodecUtils {
                 if (primaryResult.result().isPresent()) {
                     return primaryResult;
                 }
-                return alternative.decode(ops, input).map(pair -> 
+                return alternative.decode(ops, input).map(pair ->
                     Pair.of(mapper.apply(pair.getFirst()), pair.getSecond()));
             }
 
@@ -53,7 +61,7 @@ public class CodecUtils {
     }
 
     /**
-     * Implementation of lazy codec for 1.20.1
+     * Create lazily initialized codec
      */
     public static <A> Codec<A> lazy(Supplier<Codec<A>> supplier) {
         return new Codec<A>() {

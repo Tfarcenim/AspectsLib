@@ -2,10 +2,17 @@ package dev.overgrown.aspectslib.api;
 
 
 import dev.overgrown.aspectslib.data.AspectData;
+import dev.overgrown.aspectslib.mixin.ItemStackMixin;
 
 /**
  * Interface for objects that can provide aspect data.
  * Implemented via mixin on ItemStack.
+ * <p>
+ * Implemented by:
+ * <li>{@link ItemStackMixin} (for ItemStack)</li>
+ * <br>
+ * Public API access via {@link AspectsAPI}
+ * </p>
  */
 public interface IAspectDataProvider {
     /**

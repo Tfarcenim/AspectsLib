@@ -21,6 +21,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Mixin to add aspect data support to ItemStack.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ * <li>Attaches AspectData to ItemStack via NBT</li>
+ * <li>Handles initialization from tags/registry</li>
+ * <li>Manages data copying and cache invalidation</li>
+ * </ol>
+ * <p>
+ * Important Connections:
+ * <li>{@link IAspectDataProvider}: Interface implemented by this mixin</li>
+ * <li>{@link ItemAspectRegistry}: Source of default item aspects</li>
+ * <li>{@link AspectData}: Actual aspect storage</li>
+ */
+
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin implements IAspectDataProvider {
 
@@ -49,7 +65,7 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         aspectslib$cachedAspectData = data;
         aspectslib$aspectDataInitialized = true;
 
-        // Null-safe data handling
+        // Handle NBT persistence (Null-safe data handling)
         NbtCompound nbt = getNbt();
         if (data == null) {
             if (nbt != null) {
@@ -63,6 +79,7 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         }
     }
 
+    /** Initialize aspect data from NBT or registry defaults */
     @Unique
     private void aspectslib$initializeAspectData() {
         NbtCompound nbt = getNbt();
@@ -71,22 +88,27 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
             return;
         }
 
+        // Build from registry defaults
         AspectData aspectData = new AspectData(new Object2IntOpenHashMap<>());
         Identifier itemId = Registries.ITEM.getId(getItem());
         ItemStack self = (ItemStack) (Object) this; // Use self for registry entry
 
+        // Direct item registration
         if (ItemAspectRegistry.contains(itemId)) {
             aspectData = aspectData.addAspect(ItemAspectRegistry.get(itemId));
         }
 
+        // Tag-based registrations
         for (Map.Entry<Identifier, AspectData> entry : ItemAspectRegistry.entries()) {
             Identifier id = entry.getKey();
             AspectData itemAspectData = entry.getValue();
 
+            // Exact match
             if (itemId.equals(id)) {
                 aspectData = aspectData.addAspect(itemAspectData);
             }
 
+            // Tag match
             TagKey<Item> tagKey = TagKey.of(Registries.ITEM.getKey(), id);
             if (self.getRegistryEntry().isIn(tagKey)) {
                 aspectData = aspectData.addAspect(itemAspectData);
@@ -96,12 +118,14 @@ public abstract class ItemStackMixin implements IAspectDataProvider {
         aspectslib$cachedAspectData = aspectData.isEmpty() ? null : aspectData;
     }
 
+    /** Reset cache when NBT changes */
     @Inject(method = "setNbt", at = @At("RETURN"))
     private void onSetNbt(NbtCompound nbt, CallbackInfo ci) {
         aspectslib$aspectDataInitialized = false;
         aspectslib$cachedAspectData = null;
     }
 
+    /** Copy aspect data when item is copied */
     @Inject(method = "copy", at = @At("RETURN"))
     private void onCopy(CallbackInfoReturnable<ItemStack> cir) {
         ItemStack copy = cir.getReturnValue();

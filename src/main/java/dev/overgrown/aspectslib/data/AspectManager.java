@@ -15,8 +15,22 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Simple map-based aspect loader that reloads from datapacks.
+ * Simple map-based aspect loader that reloads from datapacks. (Loads aspect definitions from datapacks)
  * Much simpler than trying to use dynamic registries in 1.20.1!
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ * <li>Loads aspect JSON files from data/aspectslib/aspects</li>
+ * <li>Populates ModRegistries.ASPECTS</li>
+ * </ol>
+ * </p>
+ * File format example (data/aspectslib/aspects/terra.json):
+ * <pre>{@code
+ * {
+ *   "name": "Terra",
+ *   "texture_location": "aspectslib:textures/aspects_icons/terra.png"
+ * }
+ * }</pre>
  */
 public class AspectManager extends JsonDataLoader implements IdentifiableResourceReloadListener {
 

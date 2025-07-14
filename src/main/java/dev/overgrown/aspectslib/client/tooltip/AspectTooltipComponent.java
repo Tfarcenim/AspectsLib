@@ -15,6 +15,14 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
+/**
+ * Renders aspect information in item tooltips.
+ * <p>
+ * Features:
+ * <li>Shows icons and amounts</li>
+ * <li>Toggle between names/values with SHIFT</li>
+ * <li>Dynamic sizing</li>
+ */
 public class AspectTooltipComponent implements TooltipComponent {
     private final AspectData aspectData;
 
@@ -22,6 +30,7 @@ public class AspectTooltipComponent implements TooltipComponent {
         this.aspectData = data.aspectData();
     }
 
+    /** Check if it should show aspect names */
     private boolean shouldShowNames() {
         MinecraftClient client = MinecraftClient.getInstance();
         return client.currentScreen != null && Screen.hasShiftDown();
@@ -29,7 +38,7 @@ public class AspectTooltipComponent implements TooltipComponent {
 
     @Override
     public int getHeight() {
-        return 18;
+        return 18; // Fixed height per line
     }
 
     @Override
@@ -67,11 +76,13 @@ public class AspectTooltipComponent implements TooltipComponent {
 
             Identifier texture = aspect.textureLocation();
 
+            // Draw aspect icon
             RenderSystem.setShaderTexture(0, texture);
             context.drawTexture(texture, currentX, y, 0, 0, 16, 16, 16, 16);
 
             int textY = y + 5;
 
+            // Draw text (name or value)
             if (showNames) {
                 Text aspectName = aspect.getTranslatedName().formatted(Formatting.WHITE);
                 context.drawText(textRenderer, aspectName, currentX + 18, textY, TEXT_COLOR, false);

@@ -2,9 +2,7 @@ package dev.overgrown.aspectslib;
 
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipComponent;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipData;
-import dev.overgrown.aspectslib.data.Aspect;
-import dev.overgrown.aspectslib.data.AspectManager;
-import dev.overgrown.aspectslib.data.ModRegistries;
+import dev.overgrown.aspectslib.data.*;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
@@ -14,10 +12,32 @@ import net.minecraft.util.Identifier;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Client-side initialization for AspectsLib.
+ * <p>
+ * Responsibilities:
+ * <ol type="1">
+ *     <li>Registers custom tooltip rendering</li>
+ *     <li>Handles aspect data synchronization from server</li>
+ * </ol>
+ * </p>
+ * <p>
+ * Usage:
+ * <li>Automatically initialized by Fabric on client</li>
+ * <li>Integrates with Minecraft's tooltip system</li>
+ * </p>
+ * <br>
+ * Important Connections:
+ * <li>{@link AspectTooltipComponent}: Renders aspect data in tooltips</li>
+ * <li>{@link SyncAspectIdentifierPacket}: Receives aspect data from server</li>
+ * <li>{@link ModRegistries}: Stores client-side aspect registry</li>
+ */
+
 public class AspectsLibClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // Register custom tooltip component
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof AspectTooltipData aspectTooltipData) {
                 return new AspectTooltipComponent(aspectTooltipData);
@@ -25,11 +45,13 @@ public class AspectsLibClient implements ClientModInitializer {
             return null;
         });
 
+        // Handle aspect data sync from server
         ClientPlayNetworking.registerGlobalReceiver(SyncAspectIdentifierPacket.ID, (client, handler, buf, responseSender) -> {
             try {
                 Map<String, Identifier> nameMap = SyncAspectIdentifierPacket.readNameMap(buf);
                 Map<Identifier, Aspect> aspectMap;
 
+                // Handle legacy packet format
                 if (buf.readableBytes() > 0) {
                     aspectMap = SyncAspectIdentifierPacket.readAspectData(buf);
                 } else {
@@ -39,7 +61,8 @@ public class AspectsLibClient implements ClientModInitializer {
 
                 final Map<String, Identifier> finalNameMap = nameMap;
                 final Map<Identifier, Aspect> finalAspectMap = aspectMap;
-                
+
+                // Apply received data on client thread
                 client.execute(() -> {
                     AspectManager.NAME_TO_ID.clear();
                     AspectManager.NAME_TO_ID.putAll(finalNameMap);

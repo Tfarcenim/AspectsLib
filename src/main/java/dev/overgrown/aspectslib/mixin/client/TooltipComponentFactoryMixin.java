@@ -11,6 +11,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/**
+ * Client-side mixin for tooltip rendering (currently unused).
+ * <p>
+ * Note: Replaced by TooltipComponentCallback.EVENT in AspectsLibClient
+ */
 @Environment(EnvType.CLIENT)
 @Mixin(TooltipComponent.class)
 public interface TooltipComponentFactoryMixin {

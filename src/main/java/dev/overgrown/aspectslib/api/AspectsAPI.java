@@ -11,7 +11,33 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 
 /**
- * Public API for AspectsLib
+ * Public API for AspectsLib functionality.
+ * <p>
+ * Provides:
+ * <li>Access to aspect data on items</li>
+ * <li>Aspect lookup methods</li>
+ * <li>Item-aspect registration</li>
+ * </p>
+ * <p>
+* <br>
+ * Usage Example:
+ * <pre>{@code
+ * // Get aspects from item
+ * AspectData data = AspectsAPI.getAspectData(stack);
+ * }</pre>
+ * </p>
+ * <p>
+ * <pre>{@code
+ * // Add aspect to item
+ * AspectsAPI.addAspect(stack, new Identifier("mymod:ignis"), 5);
+ * }</pre>
+ * </p>
+ * <p>
+ * <pre>{@code
+ * // Register default aspects for item
+ * AspectsAPI.registerItemAspect(Items.DIAMOND, new Identifier("aspectslib:vitreus"), 10);
+ * }</pre>
+ * </p>
  */
 public class AspectsAPI {
 

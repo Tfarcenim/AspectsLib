@@ -9,6 +9,12 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 
+/**
+ * Codec for RegistryEntry serialization (currently unused in AspectsLib).
+ * <p>
+ * Provided as utility for possible future use.
+ * </p>
+ */
 public class RegistryEntryCodec<T> implements Codec<RegistryEntry<T>> {
     private final Registry<T> registry;
 

@@ -10,8 +10,18 @@ import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This is the Aspect class, which holds an instance of Aspect derived from files found in
- * data/aspectslib/aspects/{json_file}.json
+ * This is the Aspect class, which holds an instance of Aspect derived from files found in data/aspectslib/aspects/{json_file}.json
+ * <p>
+ * Properties:
+ * <li>name: Display name</li>
+ * <li>textureLocation: Custom texture path (optional)</li>
+ * </p>
+ * <br>
+ * <p>
+ * Serialization:
+ * <li>JSON for datapacks</li>
+ * <li>Network for client sync</li>
+ * </p>
  *
  * @param name            This holds the name of the Aspect, as it should be rendered in displays.
  * @param textureLocation This holds the location of the texture, if the player wishes to override the default texture with one from a specific directory.

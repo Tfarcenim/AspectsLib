@@ -1,6 +1,7 @@
 package dev.overgrown.aspectslib.data;
 
 import dev.overgrown.aspectslib.AspectsLib;
+import dev.overgrown.aspectslib.api.IAspectDataProvider;
 import dev.overgrown.aspectslib.codec.CodecUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -18,10 +19,18 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 /**
- * The `AspectData` class manages the association between items and their aspects.
- * It stores the levels of aspects and provides functionality for NBT serialization,
- * network synchronization, and manipulation.
- * Now uses direct Identifier->int mapping instead of registry entries.
+ * The `AspectData` class is the container for aspect amounts associated with an item and manages the association between items and their aspects. It stores the levels of aspects and provides functionality for NBT serialization, network synchronization, and manipulation. Now uses direct Identifier->int mapping instead of registry entries.
+ * <p>
+ * Features:
+ * <li>NBT serialization</li>
+ * <li>Network synchronization</li>
+ * <li>Builder pattern for modification</li>
+ * </p>
+ * <p>
+ * Usage:
+ * <li>Stored on ItemStack via {@link IAspectDataProvider}</li>
+ * <li>Used in tooltip rendering</li>
+ * </p>
  */
 public class AspectData {
 
