@@ -5,6 +5,7 @@ import dev.overgrown.aspectslib.api.IAspectDataProvider;
 import dev.overgrown.aspectslib.codec.CodecUtils;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import dev.overgrown.aspectslib.resonance.ResonanceCalculator;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.nbt.NbtCompound;
@@ -272,5 +273,21 @@ public class AspectData {
         public AspectData build() {
             return new AspectData(this.aspects);
         }
+    }
+
+    /**
+     * Calculates the Resonance Units (RU).
+     */
+    public double calculateTotalRU() {
+        double total = 0;
+        for (Object2IntMap.Entry<Identifier> entry : aspects.object2IntEntrySet()) {
+            total += entry.getIntValue();
+        }
+        return total;
+    }
+
+    // Add resonance calculation
+    public ResonanceCalculator.ResonanceResult calculateResonance() {
+        return ResonanceCalculator.calculate(this);
     }
 }
