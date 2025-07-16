@@ -1,6 +1,5 @@
 package dev.overgrown.aspectslib;
 
-import dev.overgrown.aspectslib.aether.AetherManager;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
 import dev.overgrown.aspectslib.resonance.ResonanceManager;
@@ -65,10 +64,6 @@ public class AspectsLib implements ModInitializer {
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 				.registerReloadListener(new ResonanceManager());
-
-		// Register Aether Manager
-		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
-				.registerReloadListener(new AetherManager());
 
 		LOGGER.info("AspectsLib initialized!");
 	}

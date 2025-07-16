@@ -1,16 +1,11 @@
 package dev.overgrown.aspectslib.api;
 
-import dev.overgrown.aspectslib.aether.AetherDataHolder;
-import dev.overgrown.aspectslib.aether.ChunkAetherData;
 import dev.overgrown.aspectslib.data.*;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -162,23 +157,5 @@ public class AspectsAPI {
      */
     public static java.util.Map<Identifier, Aspect> getAllAspects() {
         return java.util.Collections.unmodifiableMap(ModRegistries.ASPECTS);
-    }
-
-    public static double getAetherDensity(World world, BlockPos pos, Identifier aspectId) {
-        Chunk chunk = world.getChunk(pos);
-        if (chunk instanceof AetherDataHolder) {
-            ChunkAetherData data = ((AetherDataHolder) chunk).getAetherData();
-            return data.getDensity(aspectId);
-        }
-        return 0.0;
-    }
-
-    public static boolean isDeadZone(World world, BlockPos pos) {
-        Chunk chunk = world.getChunk(pos);
-        if (chunk instanceof AetherDataHolder) {
-            ChunkAetherData data = ((AetherDataHolder) chunk).getAetherData();
-            return data.isPermanentDeadZone();
-        }
-        return false;
     }
 }
