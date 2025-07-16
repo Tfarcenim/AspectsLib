@@ -1,0 +1,8 @@
+{
+  "entity": "minecraft:zombie",
+  "aspects": {
+    "aspectslib:exanimis": 8,
+    "aspectslib:perditio": 5,
+    "aspectslib:bestia": 3
+  }
+}

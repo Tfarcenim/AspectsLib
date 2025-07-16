@@ -2,6 +2,7 @@ package dev.overgrown.aspectslib;
 
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
+import dev.overgrown.aspectslib.data.EntityAspectManager;
 import dev.overgrown.aspectslib.resonance.ResonanceManager;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ModInitializer;
@@ -64,6 +65,10 @@ public class AspectsLib implements ModInitializer {
 
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 				.registerReloadListener(new ResonanceManager());
+
+		// Register entity aspect manager
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+				.registerReloadListener(new EntityAspectManager());
 
 		LOGGER.info("AspectsLib initialized!");
 	}
