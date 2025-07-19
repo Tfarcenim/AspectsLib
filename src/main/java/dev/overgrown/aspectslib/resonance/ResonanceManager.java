@@ -43,9 +43,7 @@ public class ResonanceManager extends JsonDataLoader implements IdentifiableReso
             AspectsLib.LOGGER.info("Processing resonance file: {}", id);
 
             CODEC.parse(JsonOps.INSTANCE, json)
-                    .resultOrPartial(error -> {
-                        AspectsLib.LOGGER.error("Failed to parse resonance file {}: {}", id, error);
-                    })
+                    .resultOrPartial(error -> AspectsLib.LOGGER.error("Failed to parse resonance file {}: {}", id, error))
                     .ifPresent(resonance -> {
                         AspectsLib.LOGGER.info("Loaded resonance: {} <-> {} ({})",
                                 resonance.aspect1(), resonance.aspect2(), resonance.type());

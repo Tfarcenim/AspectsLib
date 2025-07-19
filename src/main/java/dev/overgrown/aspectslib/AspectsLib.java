@@ -1,5 +1,7 @@
 package dev.overgrown.aspectslib;
 
+import dev.overgrown.aspectslib.aether.BiomeAetherDensityManager;
+import dev.overgrown.aspectslib.aether.StructureAetherModifierManager;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
 import dev.overgrown.aspectslib.data.EntityAspectManager;
@@ -69,6 +71,12 @@ public class AspectsLib implements ModInitializer {
 		// Register entity aspect manager
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 				.registerReloadListener(new EntityAspectManager());
+
+		// Register Aether density loaders
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+				.registerReloadListener(new BiomeAetherDensityManager());
+		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
+				.registerReloadListener(new StructureAetherModifierManager());
 
 		LOGGER.info("AspectsLib initialized!");
 	}
