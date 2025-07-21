@@ -4,8 +4,11 @@ import dev.overgrown.aspectslib.client.tooltip.AspectTooltipComponent;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipData;
 import dev.overgrown.aspectslib.data.*;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
+import dev.overgrown.aspectslib.registry.ModEntities;
+import dev.overgrown.aspectslib.entity.aura_node.render.AuraNodeRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.TooltipComponentCallback;
 import net.minecraft.util.Identifier;
 
@@ -37,6 +40,8 @@ public class AspectsLibClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        EntityRendererRegistry.register(ModEntities.AURA_NODE, AuraNodeRenderer::new);
+
         // Register custom tooltip component
         TooltipComponentCallback.EVENT.register(data -> {
             if (data instanceof AspectTooltipData aspectTooltipData) {

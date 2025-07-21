@@ -5,6 +5,8 @@ import dev.overgrown.aspectslib.aether.StructureAetherModifierManager;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
 import dev.overgrown.aspectslib.data.EntityAspectManager;
+import dev.overgrown.aspectslib.registry.ModEntities;
+import dev.overgrown.aspectslib.registry.ModEntityAttributes;
 import dev.overgrown.aspectslib.resonance.ResonanceManager;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ModInitializer;
@@ -49,6 +51,9 @@ public class AspectsLib implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		ModEntities.register();
+		ModEntityAttributes.register();
+
 		// Sync aspect data to players when they join
 		ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {
 			try {
