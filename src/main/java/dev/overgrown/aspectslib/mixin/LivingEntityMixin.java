@@ -21,6 +21,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements IAspectAffinityEntity {
+
+    @Unique
+    private AspectData aspectslib$originalAspectData = AspectData.DEFAULT;
+
+    @Unique
+    @Override
+    public AspectData aspectslib$getOriginalAspectData() {
+        return this.aspectslib$originalAspectData;
+    }
+
+    @Unique
+    @Override
+    public void aspectslib$setOriginalAspectData(AspectData data) {
+        this.aspectslib$originalAspectData = data;
+    }
+
     @Unique
     private static final TrackedData<NbtCompound> ASPECTS_DATA = DataTracker.registerData(LivingEntityMixin.class, TrackedDataHandlerRegistry.NBT_COMPOUND);
 
@@ -40,6 +56,20 @@ public abstract class LivingEntityMixin extends Entity implements IAspectAffinit
             if (data != null) {
                 this.aspectslib$setAspectData(data);
             }
+        }
+    }
+    
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    public void aspects_writeOriginalDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+        if (!this.aspectslib$originalAspectData.isEmpty()) {
+            nbt.put("AspectsLibOriginalData", this.aspectslib$originalAspectData.toNbt());
+        }
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    public void aspects_readOriginalDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+        if (nbt.contains("AspectsLibOriginalData", NbtElement.COMPOUND_TYPE)) {
+            this.aspectslib$originalAspectData = AspectData.fromNbt(nbt.getCompound("AspectsLibOriginalData"));
         }
     }
 
