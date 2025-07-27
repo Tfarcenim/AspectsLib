@@ -7,6 +7,7 @@ import net.minecraft.structure.StructureStart;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.structure.Structure;
 
@@ -16,16 +17,16 @@ import java.util.Map;
 public class AetherDensityManager {
     public static AetherDensity getDensity(World world, BlockPos pos) {
         // Get base density from biome
-        RegistryEntry<net.minecraft.world.biome.Biome> biome = world.getBiome(pos);
+        RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
         Identifier biomeId = null;
 
         // Safely get biome ID
-        if (biome.getKey().isPresent()) {
-            biomeId = biome.getKey().get().getValue();
+        if (biomeEntry.getKey().isPresent()) {
+            biomeId = biomeEntry.getKey().get().getValue();
         } else if (world instanceof ServerWorld serverWorld) {
             biomeId = serverWorld.getRegistryManager()
                     .get(RegistryKeys.BIOME)
-                    .getId(biome.value());
+                    .getId(biomeEntry.value());
         }
 
         AetherDensity density = biomeId != null ?
@@ -80,7 +81,18 @@ public class AetherDensityManager {
                     finalDensities.computeIfPresent(aspect, (k, v) -> v * value)
             );
 
-            density = new AetherDensity(finalDensities);
+            // Apply dynamic modifications
+            if (biomeId != null) {
+                // Get dynamic modifications for this biome
+                Map<Identifier, Double> dynamicMods = DynamicAetherDensityManager.getModifications(biomeId);
+                if (dynamicMods != null) {
+                    for (Map.Entry<Identifier, Double> entry : dynamicMods.entrySet()) {
+                        finalDensities.merge(entry.getKey(), entry.getValue(), Double::sum);
+                    }
+                }
+            }
+
+            return new AetherDensity(finalDensities);
         }
 
         return density;

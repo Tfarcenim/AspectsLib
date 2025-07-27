@@ -38,13 +38,14 @@ public class AuraNodeSpawner {
             // Determine node type
             AuraNodeEntity.NodeType nodeType;
             float roll = random.nextFloat();
-
-            if (roll < 0.0157f) { // 1.57% chance
-                nodeType = roll < 0.0056f ?
-                        AuraNodeEntity.NodeType.HUNGRY : // 0.56% chance
-                        (roll < 0.0157f ?
-                                AuraNodeEntity.NodeType.PURE : // 1.01% chance
-                                AuraNodeEntity.NodeType.SINISTER); // 1.01% chance
+            if (roll < 0.0056f) { // 0.56%
+                nodeType = AuraNodeEntity.NodeType.HUNGRY;
+            } else if (roll < 0.0056f + 0.0167f) { // 0.56% + 1.67% = 2.23%
+                nodeType = AuraNodeEntity.NodeType.PURE;
+            } else if (roll < 0.0056f + 0.0167f + 0.0167f) { // 2.23% + 1.67% = 3.9%
+                nodeType = AuraNodeEntity.NodeType.SINISTER;
+            } else if (roll < 0.0056f + 0.0167f + 0.0167f + 0.0167f) { // 3.9% + 1.67% = 5.57%
+                nodeType = AuraNodeEntity.NodeType.UNSTABLE;
             } else {
                 nodeType = random.nextFloat() < 0.8f ?
                         AuraNodeEntity.NodeType.NORMAL :

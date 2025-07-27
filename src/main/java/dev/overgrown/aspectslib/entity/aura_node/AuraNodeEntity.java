@@ -3,6 +3,11 @@ package dev.overgrown.aspectslib.entity.aura_node;
 import dev.overgrown.aspectslib.AspectsLib;
 import dev.overgrown.aspectslib.data.AspectData;
 import dev.overgrown.aspectslib.resonance.ResonanceCalculator;
+import dev.overgrown.aspectslib.aether.AetherDensityManager;
+import dev.overgrown.aspectslib.aether.DynamicAetherDensityManager;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.world.biome.Biome;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -97,10 +102,18 @@ public class AuraNodeEntity extends Entity {
     }
 
     private void handleSinisterBehavior() {
-        // Corrupt biome every 5 seconds (100 ticks)
         if (this.age % 100 == 0) {
-            // In a real implementation, you would modify the biome's Aether Density here
-            AspectsLib.LOGGER.debug("Sinister node corrupting biome at {}", this.getBlockPos());
+            RegistryEntry<Biome> biomeEntry = getWorld().getBiome(getBlockPos());
+            Identifier biomeId = biomeEntry.getKey().map(RegistryKey::getValue).orElse(null);
+
+            if (biomeId != null) {
+                DynamicAetherDensityManager.addModification(
+                        biomeId,
+                        VITIUM_ASPECT,
+                        10 // Add 10 Vitium per corruption cycle
+                );
+                AspectsLib.LOGGER.debug("Sinister node corrupting biome {} at {}", biomeId, this.getBlockPos());
+            }
         }
     }
 
@@ -110,6 +123,8 @@ public class AuraNodeEntity extends Entity {
         // Consume every 10 seconds (200 ticks)
         if (hungerCounter >= 200) {
             hungerCounter = 0;
+            RegistryEntry<Biome> biomeEntry = getWorld().getBiome(getBlockPos());
+            Identifier biomeId = biomeEntry.getKey().map(RegistryKey::getValue).orElse(null);
 
             // Phase 1: Consume other aspects in the node
             if (aspects.size() > 1) {
@@ -136,15 +151,15 @@ public class AuraNodeEntity extends Entity {
             }
             // Phase 2: Consume from environment
             else if (aspects.containsKey(FAMES_ASPECT)) {
-                // In a real implementation, you would drain from the biome's Aether Density here
-                AspectsLib.LOGGER.debug("Hungry node draining environment at {}", this.getBlockPos());
+                if (biomeId != null) {
+                    // Drain 5 from all aspects in the biome
+                    DynamicAetherDensityManager.drainAllAspects(biomeId, 5);
+                    AspectsLib.LOGGER.debug("Hungry node draining environment at {}", this.getBlockPos());
+                }
 
-                // If nothing to consume, start consuming itself
                 AspectState famesState = aspects.get(FAMES_ASPECT);
                 if (famesState.current > 0) {
                     famesState.current = Math.max(0, famesState.current - 10);
-
-                    // Die when completely consumed
                     if (famesState.current <= 0) {
                         this.discard();
                     }
@@ -324,7 +339,7 @@ public class AuraNodeEntity extends Entity {
                 AspectsLib.identifier("praemunio"), AspectsLib.identifier("sensus"), AspectsLib.identifier("vitium")
         );
 
-        // Weighted selection based on tier
+        // Safety checks for empty lists
         if (random.nextFloat() < primalChance && !primal.isEmpty()) {
             return primal.get(random.nextInt(primal.size()));
         }
@@ -338,8 +353,8 @@ public class AuraNodeEntity extends Entity {
             return quaternary.get(random.nextInt(quaternary.size()));
         }
 
-        // Fallback to a primal aspect
-        return primal.get(random.nextInt(primal.size()));
+        // Fallback to primal if nothing else available
+        return !primal.isEmpty() ? primal.get(random.nextInt(primal.size())) : AspectsLib.identifier("aer");
     }
 
     @Override
