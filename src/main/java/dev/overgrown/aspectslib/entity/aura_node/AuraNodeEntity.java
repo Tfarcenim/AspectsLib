@@ -3,7 +3,6 @@ package dev.overgrown.aspectslib.entity.aura_node;
 import dev.overgrown.aspectslib.AspectsLib;
 import dev.overgrown.aspectslib.data.AspectData;
 import dev.overgrown.aspectslib.resonance.ResonanceCalculator;
-import dev.overgrown.aspectslib.aether.AetherDensityManager;
 import dev.overgrown.aspectslib.aether.DynamicAetherDensityManager;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -29,9 +28,12 @@ public class AuraNodeEntity extends Entity {
         NORMAL, PURE, SINISTER, UNSTABLE, HUNGRY
     }
 
+    // Regeneration accumulators
+    private final Map<Identifier, Float> regenAccumulators = new HashMap<>();
+
     // Aspect state storage
     public static class AspectState {
-        public final int original;
+        public int original;
         public int current;
 
         public AspectState(int original) {
@@ -57,6 +59,7 @@ public class AuraNodeEntity extends Entity {
     private Map<Identifier, AspectState> aspects = new HashMap<>();
     private int instabilityCounter = 0;
     private int hungerCounter = 0;
+    private int sinisterCounter = 0;
 
     public AuraNodeEntity(EntityType<?> type, World world) {
         super(type, world);
@@ -76,9 +79,15 @@ public class AuraNodeEntity extends Entity {
 
         if (!this.getWorld().isClient()) {
             // Natural regeneration for aspects
-            float regenRate = 0.001f; // 0.1% per tick
-            for (AspectState state : aspects.values()) {
-                state.regen(regenRate);
+            regenerateAspects();
+
+            // Remove aspects that have been drained to 0
+            removeDrainedAspects();
+
+            // Check if node should die
+            if (aspects.isEmpty()) {
+                this.discard();
+                return;
             }
 
             // Type-specific behaviors
@@ -101,8 +110,197 @@ public class AuraNodeEntity extends Entity {
         }
     }
 
+    private void regenerateAspects() {
+        // Base regeneration rate (0.1% per second)
+        final float BASE_REGEN_RATE = 0.00005f; // Much slower rate
+
+        switch (getNodeType()) {
+            case NORMAL, PURE -> regenerateStandard(BASE_REGEN_RATE);
+            case SINISTER -> regenerateSinister(BASE_REGEN_RATE);
+            case UNSTABLE -> regenerateUnstable(BASE_REGEN_RATE);
+            case HUNGRY -> regenerateHungry(BASE_REGEN_RATE);
+        }
+    }
+
+    private void regenerateStandard(float baseRate) {
+        for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+            regenerateAspect(entry.getKey(), entry.getValue(), baseRate);
+        }
+    }
+
+    private void regenerateSinister(float baseRate) {
+        for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+            float rate = baseRate;
+            if (entry.getKey().equals(VITIUM_ASPECT)) {
+                rate *= 1.5f; // Vitium regenerates 50% faster
+            }
+            regenerateAspect(entry.getKey(), entry.getValue(), rate);
+        }
+
+        // Handle sinister corruption
+        sinisterCounter++;
+        if (sinisterCounter >= 100) { // Every 5 seconds
+            sinisterCounter = 0;
+            RegistryEntry<Biome> biomeEntry = getWorld().getBiome(getBlockPos());
+            Identifier biomeId = biomeEntry.getKey().map(RegistryKey::getValue).orElse(null);
+
+            if (biomeId != null) {
+                DynamicAetherDensityManager.addModification(
+                        biomeId,
+                        VITIUM_ASPECT,
+                        10 // Add 10 Vitium per corruption cycle
+                );
+            }
+        }
+    }
+
+    private void regenerateUnstable(float baseRate) {
+        for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+            regenerateAspect(entry.getKey(), entry.getValue(), baseRate * 0.8f);
+        }
+    }
+
+    private void regenerateHungry(float baseRate) {
+        AspectState famesState = aspects.get(FAMES_ASPECT);
+        if (famesState == null) return;
+
+        // If Fames isn't full, consume other aspects
+        if (famesState.current < famesState.original) {
+            float totalConsumed = 0;
+            List<Identifier> toRemove = new ArrayList<>();
+
+            for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+                if (entry.getKey().equals(FAMES_ASPECT)) continue;
+
+                AspectState state = entry.getValue();
+                if (state.current <= 0) {
+                    toRemove.add(entry.getKey());
+                    continue;
+                }
+
+                // Calculate consumption (0.2% per tick)
+                float consumeAmount = state.original * baseRate * 4;
+                float available = Math.min(consumeAmount, state.current);
+
+                state.current -= (int) available;
+                totalConsumed += available;
+
+                if (state.current <= 0) {
+                    toRemove.add(entry.getKey());
+                }
+            }
+
+            // Add consumed aspects to Fames
+            if (totalConsumed > 0) {
+                famesState.current = (int) Math.min(
+                        famesState.original,
+                        famesState.current + totalConsumed
+                );
+            }
+
+            // Remove consumed aspects
+            for (Identifier id : toRemove) {
+                aspects.remove(id);
+            }
+        } else {
+            // If Fames is full, consume other aspects aggressively
+            float totalConsumed = 0;
+            List<Identifier> toRemove = new ArrayList<>();
+
+            for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+                if (entry.getKey().equals(FAMES_ASPECT)) continue;
+
+                AspectState state = entry.getValue();
+                if (state.current <= 0) {
+                    toRemove.add(entry.getKey());
+                    continue;
+                }
+
+                // More aggressive consumption (0.4% per tick)
+                float consumeAmount = state.original * baseRate * 8;
+                float available = Math.min(consumeAmount, state.current);
+
+                state.current -= (int) available;
+                totalConsumed += available;
+
+                if (state.current <= 0) {
+                    toRemove.add(entry.getKey());
+                }
+            }
+
+            // Add consumed aspects to Fames (making it stronger)
+            if (totalConsumed > 0) {
+                famesState.original += (int) totalConsumed; // Make Fames stronger
+                famesState.current = famesState.original;
+            }
+
+            // Remove consumed aspects
+            for (Identifier id : toRemove) {
+                aspects.remove(id);
+            }
+        }
+
+        // If only Fames remains, and it's full, start consuming itself
+        if (aspects.size() == 1 && aspects.containsKey(FAMES_ASPECT) &&
+                famesState.current >= famesState.original) {
+
+            // Self-consumption (0.1% per tick)
+            float consumeAmount = famesState.original * baseRate * 2;
+            famesState.current = Math.max(0, famesState.current - (int) consumeAmount);
+
+            if (famesState.current <= 0) {
+                aspects.remove(FAMES_ASPECT);
+            }
+        }
+    }
+
+    private void regenerateAspect(Identifier aspectId, AspectState state, float rate) {
+        if (state.current >= state.original) return;
+
+        // Get or create accumulator
+        float accumulator = regenAccumulators.getOrDefault(aspectId, 0f);
+
+        // Add this tick's regeneration
+        float regenThisTick = state.original * rate;
+        accumulator += regenThisTick;
+
+        // Convert accumulated value to integer
+        int toAdd = (int) accumulator;
+        if (toAdd > 0) {
+            int newCurrent = state.current + toAdd;
+            if (newCurrent > state.original) {
+                toAdd = state.original - state.current;
+                newCurrent = state.original;
+            }
+
+            state.current = newCurrent;
+            accumulator -= toAdd;
+
+            // Debug logging
+            AspectsLib.LOGGER.debug("Regenerated {}: {}/{} (+{})",
+                    aspectId, state.current, state.original, toAdd);
+        }
+
+        // Store remaining fraction
+        regenAccumulators.put(aspectId, accumulator);
+    }
+
+    private void removeDrainedAspects() {
+        List<Identifier> toRemove = new ArrayList<>();
+        for (Map.Entry<Identifier, AspectState> entry : aspects.entrySet()) {
+            if (entry.getValue().current <= 0) {
+                toRemove.add(entry.getKey());
+            }
+        }
+        for (Identifier id : toRemove) {
+            aspects.remove(id);
+        }
+    }
+
     private void handleSinisterBehavior() {
-        if (this.age % 100 == 0) {
+        sinisterCounter++;
+        if (sinisterCounter >= 100) { // Every 5 seconds
+            sinisterCounter = 0;
             RegistryEntry<Biome> biomeEntry = getWorld().getBiome(getBlockPos());
             Identifier biomeId = biomeEntry.getKey().map(RegistryKey::getValue).orElse(null);
 
@@ -181,7 +379,7 @@ public class AuraNodeEntity extends Entity {
 
             // Increase instability if there's barrier cost (opposing resonance)
             if (result.barrierCost() > 0) {
-                instabilityCounter += result.barrierCost();
+                instabilityCounter += (int) Math.ceil(result.barrierCost());
                 AspectsLib.LOGGER.debug("Unstable node instability: {}", instabilityCounter);
 
                 // Explode when instability reaches threshold
@@ -209,7 +407,7 @@ public class AuraNodeEntity extends Entity {
         // Read node type
         this.setNodeType(NodeType.values()[nbt.getByte("NodeType")]);
 
-        // Read aspects
+        // Read aspects - Create AspectState with correct current value
         aspects.clear();
         NbtList aspectsList = nbt.getList("Aspects", NbtElement.COMPOUND_TYPE);
         for (NbtElement element : aspectsList) {
@@ -217,9 +415,11 @@ public class AuraNodeEntity extends Entity {
             Identifier id = new Identifier(aspectNbt.getString("Id"));
             int original = aspectNbt.getInt("Original");
             int current = aspectNbt.getInt("Current");
-            aspects.put(id, new AspectState(original) {{
-                this.current = current;
-            }});
+
+            // Create AspectState with proper current value
+            AspectState state = new AspectState(original);
+            state.current = current;
+            aspects.put(id, state);
         }
 
         instabilityCounter = nbt.getInt("Instability");
