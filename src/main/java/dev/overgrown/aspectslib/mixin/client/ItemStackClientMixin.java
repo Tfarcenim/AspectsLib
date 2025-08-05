@@ -1,12 +1,15 @@
 package dev.overgrown.aspectslib.mixin.client;
 
 import dev.overgrown.aspectslib.api.IAspectDataProvider;
+import dev.overgrown.aspectslib.client.AspectsTooltipConfig;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipComponent;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipData;
 import dev.overgrown.aspectslib.data.AspectData;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.item.TooltipData;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,6 +40,14 @@ public abstract class ItemStackClientMixin {
         AspectData aspectData = provider.aspectslib$getAspectData();
 
         if (aspectData == null || aspectData.isEmpty()) {
+            return;
+        }
+
+        // Check if we should show aspects based on conditions
+        MinecraftClient client = MinecraftClient.getInstance();
+        PlayerEntity player = client.player;
+
+        if (!AspectsTooltipConfig.shouldShowTooltip((ItemStack)(Object)this, player)) {
             return;
         }
 

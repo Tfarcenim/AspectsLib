@@ -1,5 +1,6 @@
 package dev.overgrown.aspectslib;
 
+import dev.overgrown.aspectslib.client.AspectsTooltipConfig;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipComponent;
 import dev.overgrown.aspectslib.client.tooltip.AspectTooltipData;
 import dev.overgrown.aspectslib.data.*;
@@ -40,6 +41,9 @@ public class AspectsLibClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        // Initialize default tooltip visibility to hidden
+        AspectsTooltipConfig.setAlwaysShow(false);
+
         EntityRendererRegistry.register(ModEntities.AURA_NODE, AuraNodeRenderer::new);
 
         // Register custom tooltip component
