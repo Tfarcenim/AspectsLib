@@ -20,7 +20,9 @@ public class ResonanceCalculator {
             int amount = entry.getValue();
 
             // Get all resonance relationships for this aspect
-            List<Resonance> resonances = ResonanceManager.RESONANCE_MAP.getOrDefault(aspectId, Collections.emptyList());
+            List<Resonance> resonances = ResonanceManager.RESONANCE_MAP.getOrDefault(
+                    aspectId, Collections.emptyList()
+            );
 
             for (Resonance resonance : resonances) {
                 if (resonance == null) continue;
