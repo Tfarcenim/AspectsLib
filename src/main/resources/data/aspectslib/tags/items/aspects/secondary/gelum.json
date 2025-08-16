@@ -2,7 +2,7 @@
   "replace":false,
   "values":[
     {
-      "id":"aspectslib:geluma_aspect_shard",
+      "id":"aspectslib:gelum_aspect_shard",
       "required":false
     },
     {
