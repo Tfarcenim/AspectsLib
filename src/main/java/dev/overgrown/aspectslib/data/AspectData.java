@@ -252,7 +252,7 @@ public class AspectData {
         public void addByName(String aspectName, int level) {
             Identifier aspectId = AspectManager.NAME_TO_ID.get(aspectName);
             if (aspectId != null) {
-                add(aspectId, level);
+                this.aspects.put(aspectId, this.aspects.getOrDefault(aspectId, 0) + level);
             }
         }
 
