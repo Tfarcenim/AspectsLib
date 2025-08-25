@@ -1,6 +1,7 @@
 package dev.overgrown.aspectslib;
 
 import dev.overgrown.aspectslib.aether.BiomeAetherDensityManager;
+import dev.overgrown.aspectslib.aether.CorruptionManager;
 import dev.overgrown.aspectslib.aether.StructureAetherModifierManager;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
@@ -11,8 +12,10 @@ import dev.overgrown.aspectslib.resonance.ResonanceManager;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -82,6 +85,12 @@ public class AspectsLib implements ModInitializer {
 				.registerReloadListener(new BiomeAetherDensityManager());
 		ResourceManagerHelper.get(ResourceType.SERVER_DATA)
 				.registerReloadListener(new StructureAetherModifierManager());
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            for (ServerWorld world : server.getWorlds()) {
+                CorruptionManager.tick(world);
+            }
+        });
 
 		LOGGER.info("AspectsLib initialized!");
 	}
