@@ -27,25 +27,39 @@ public class CorruptionManager {
             Identifier biomeId = entry.getKey();
             List<CorruptionSource> sources = entry.getValue();
 
+            // Get base biome density
+            AetherDensity baseDensity = BiomeAetherDensityManager.DENSITY_MAP.getOrDefault(biomeId, AetherDensity.EMPTY);
+
             // Get current modifications
             Map<Identifier, Double> modifications = DynamicAetherDensityManager.getModifications(biomeId);
             if (modifications == null) {
-                continue;
+                modifications = new HashMap<>();
             }
 
-            // Check if vitium is dominant
-            Double vitiumAmount = modifications.get(VITIUM_ASPECT);
-            if (vitiumAmount == null || vitiumAmount <= 0) {
-                continue;
+            // Calculate total vitium (base + modifications)
+            double totalVitium = baseDensity.getDensity(VITIUM_ASPECT) +
+                    modifications.getOrDefault(VITIUM_ASPECT, 0.0);
+
+            // Calculate total other aspects (base + modifications)
+            double totalOtherAspects = 0;
+            for (Map.Entry<Identifier, Double> baseEntry : baseDensity.getDensities().entrySet()) {
+                if (!baseEntry.getKey().equals(VITIUM_ASPECT)) {
+                    totalOtherAspects += baseEntry.getValue() +
+                            modifications.getOrDefault(baseEntry.getKey(), 0.0);
+                }
             }
 
-            double totalOtherAspects = modifications.entrySet().stream()
-                    .filter(e -> !e.getKey().equals(VITIUM_ASPECT))
-                    .mapToDouble(Map.Entry::getValue)
-                    .sum();
+            // Add other aspects that are only in modifications but not in base
+            for (Map.Entry<Identifier, Double> modEntry : modifications.entrySet()) {
+                if (!modEntry.getKey().equals(VITIUM_ASPECT) &&
+                        !baseDensity.getDensities().containsKey(modEntry.getKey())) {
+                    totalOtherAspects += modEntry.getValue();
+                }
+            }
 
-            // If vitium is dominant, convert other aspects to vitium
-            if (vitiumAmount > totalOtherAspects) {
+            // Only start corruption if vitium is dominant
+            if (totalVitium > totalOtherAspects) {
+                // If vitium is dominant, convert other aspects to vitium
                 for (Map.Entry<Identifier, Double> aspectEntry : modifications.entrySet()) {
                     if (aspectEntry.getKey().equals(VITIUM_ASPECT)) {
                         continue;
