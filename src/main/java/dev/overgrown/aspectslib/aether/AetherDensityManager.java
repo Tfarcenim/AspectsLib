@@ -1,5 +1,6 @@
 package dev.overgrown.aspectslib.aether;
 
+import dev.overgrown.aspectslib.AspectsLib;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.world.ServerWorld;
@@ -16,11 +17,9 @@ import java.util.Map;
 
 public class AetherDensityManager {
     public static AetherDensity getDensity(World world, BlockPos pos) {
-        // Get base density from biome
         RegistryEntry<Biome> biomeEntry = world.getBiome(pos);
         Identifier biomeId = null;
 
-        // Safely get biome ID
         if (biomeEntry.getKey().isPresent()) {
             biomeId = biomeEntry.getKey().get().getValue();
         } else if (world instanceof ServerWorld serverWorld) {
@@ -29,11 +28,18 @@ public class AetherDensityManager {
                     .getId(biomeEntry.value());
         }
 
+        AspectsLib.LOGGER.debug("Getting density for biome: {} at position {}", biomeId, pos);
+        AspectsLib.LOGGER.debug("Available biome densities: {}", BiomeAetherDensityManager.DENSITY_MAP.keySet());
+        
         AetherDensity density = biomeId != null ?
                 BiomeAetherDensityManager.DENSITY_MAP.getOrDefault(biomeId, AetherDensity.EMPTY) :
                 AetherDensity.EMPTY;
-
-        // Apply structure modifiers
+                
+        if (density == AetherDensity.EMPTY && biomeId != null) {
+            AspectsLib.LOGGER.debug("No base density found for biome: {}", biomeId);
+        } else if (density != AetherDensity.EMPTY) {
+            AspectsLib.LOGGER.debug("Found base density for biome {}: {}", biomeId, density.getDensities());
+        }
         if (world instanceof ServerWorld serverWorld) {
             Chunk chunk = world.getChunk(pos);
             Map<Structure, StructureStart> structureStarts = chunk.getStructureStarts();
@@ -45,7 +51,6 @@ public class AetherDensityManager {
                 Structure structure = entry.getKey();
                 StructureStart start = entry.getValue();
 
-                // Null-safe bounding box check
                 if (start != null && start.getBoundingBox() != null && start.getBoundingBox().contains(pos)) {
                     Identifier structureId = world.getRegistryManager().get(RegistryKeys.STRUCTURE).getId(structure);
                     if (structureId == null) continue;
@@ -68,22 +73,17 @@ public class AetherDensityManager {
                 }
             }
 
-            // Apply modifiers
             Map<Identifier, Double> finalDensities = new HashMap<>(density.getDensities());
 
-            // Additive modifiers
             additiveModifiers.forEach((aspect, value) ->
                     finalDensities.merge(aspect, value, Double::sum)
             );
 
-            // Multiplicative modifiers
             multiplicativeModifiers.forEach((aspect, value) ->
                     finalDensities.computeIfPresent(aspect, (k, v) -> v * value)
             );
 
-            // Apply dynamic modifications
             if (biomeId != null) {
-                // Get dynamic modifications for this biome
                 Map<Identifier, Double> dynamicMods = DynamicAetherDensityManager.getModifications(biomeId);
                 if (dynamicMods != null) {
                     for (Map.Entry<Identifier, Double> entry : dynamicMods.entrySet()) {
