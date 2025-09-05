@@ -1,5 +1,6 @@
 package dev.overgrown.aspectslib.aether;
 
+import dev.overgrown.aspectslib.AspectsLib;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.server.world.ServerWorld;
@@ -15,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CorruptionManager {
     private static final Map<Identifier, List<CorruptionSource>> CORRUPTION_SOURCES = new ConcurrentHashMap<>();
-    private static final Identifier VITIUM_ASPECT = new Identifier("aspectslib", "vitium");
+    private static final Identifier VITIUM_ASPECT = AspectsLib.identifier("vitium");
 
     public static void addCorruptionSource(Identifier biomeId, BlockPos pos, int strength) {
         CORRUPTION_SOURCES.computeIfAbsent(biomeId, k -> new ArrayList<>())
