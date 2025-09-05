@@ -3,6 +3,7 @@ package dev.overgrown.aspectslib;
 import dev.overgrown.aspectslib.aether.BiomeAetherDensityManager;
 import dev.overgrown.aspectslib.aether.CorruptionManager;
 import dev.overgrown.aspectslib.aether.StructureAetherModifierManager;
+import dev.overgrown.aspectslib.command.AetherDensityCommand;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
 import dev.overgrown.aspectslib.data.EntityAspectManager;
@@ -11,6 +12,7 @@ import dev.overgrown.aspectslib.registry.ModItems;
 import dev.overgrown.aspectslib.resonance.ResonanceManager;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
@@ -56,6 +58,11 @@ public class AspectsLib implements ModInitializer {
 	public void onInitialize() {
         ModItems.initialize();
 		ModEntities.register();
+
+		// Register commands
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+			AetherDensityCommand.register(dispatcher);
+		});
 
 		// Sync aspect data to players when they join
 		ServerLifecycleEvents.SYNC_DATA_PACK_CONTENTS.register((player, joined) -> {

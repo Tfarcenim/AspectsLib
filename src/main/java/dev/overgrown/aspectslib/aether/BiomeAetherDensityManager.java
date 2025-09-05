@@ -24,38 +24,60 @@ public class BiomeAetherDensityManager extends JsonDataLoader implements Identif
     @Override
     protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
         DENSITY_MAP.clear();
+        AspectsLib.LOGGER.info("Starting to load biome aether densities from {} files", prepared.size());
+        
         prepared.forEach((resourceId, json) -> {
             try {
+                AspectsLib.LOGGER.debug("Processing resource: {}", resourceId);
+                
                 String path = resourceId.getPath();
-                String biomePath = path.replace("aether_densities/biome/", "");
-                if (biomePath.isEmpty()) {
-                    AspectsLib.LOGGER.warn("Empty biome path in resource: {}", resourceId);
-                    return;
+                
+                if (path.endsWith(".json")) {
+                    path = path.substring(0, path.length() - 5);
                 }
-
-                if (biomePath.endsWith(".json")) {
-                    biomePath = biomePath.substring(0, biomePath.length() - 5);
+                
+                Identifier biomeId;
+                
+                if (path.contains("/")) {
+                    String[] parts = path.split("/");
+                    if (parts.length >= 2) {
+                        String namespace = parts[0];
+                        String biomeName = String.join("/", java.util.Arrays.copyOfRange(parts, 1, parts.length));
+                        biomeId = new Identifier(namespace, biomeName);
+                    } else {
+                        biomeId = new Identifier(resourceId.getNamespace(), path);
+                    }
+                } else {
+                    biomeId = new Identifier(resourceId.getNamespace(), path);
                 }
-
-                Identifier biomeId = new Identifier(resourceId.getNamespace(), biomePath);
+                
+                AspectsLib.LOGGER.info("Loading aether density for biome: {}", biomeId);
+                
                 JsonObject jsonObj = json.getAsJsonObject();
 
-                // Handle different JSON structures
                 JsonObject valuesObj = null;
                 if (jsonObj.has("values")) {
                     valuesObj = jsonObj.getAsJsonObject("values");
                 } else {
-                    // Fallback: treat the entire object as values
                     valuesObj = jsonObj;
                 }
 
                 AetherDensity density = AetherDensity.fromJson(valuesObj);
                 DENSITY_MAP.put(biomeId, density);
+                
+                AspectsLib.LOGGER.info("Successfully loaded {} aspects for biome {}: {}", 
+                    density.getDensities().size(), biomeId, density.getDensities());
+                    
             } catch (Exception e) {
-                AspectsLib.LOGGER.error("Error loading biome aether density from {}: {}", resourceId, e.getMessage());
+                AspectsLib.LOGGER.error("Error loading biome aether density from {}: {}", resourceId, e.getMessage(), e);
             }
         });
-        AspectsLib.LOGGER.info("Loaded {} biome aether densities", DENSITY_MAP.size());
+        
+        AspectsLib.LOGGER.info("Completed loading {} biome aether densities", DENSITY_MAP.size());
+        
+        DENSITY_MAP.forEach((biomeId, density) -> {
+            AspectsLib.LOGGER.debug("Biome {} has densities: {}", biomeId, density.getDensities());
+        });
     }
 
     @Override
