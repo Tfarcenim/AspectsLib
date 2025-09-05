@@ -77,12 +77,10 @@ public class CorruptionManager {
                     );
                 }
 
-                // If only vitium remains, replace random blocks with sculk from each source
-                if (totalOtherAspects <= 0) {
-                    for (CorruptionSource source : sources) {
-                        if (world.getRandom().nextFloat() < 0.1f) { // 10% chance per source per tick
-                            replaceRandomBlockWithSculk(world, source.position);
-                        }
+                // Replace random blocks with sculk from each source when vitium is dominant
+                for (CorruptionSource source : sources) {
+                    if (world.getRandom().nextFloat() < 0.1f) { // 10% chance per source per tick
+                        replaceRandomBlockWithSculk(world, source.position);
                     }
                 }
             }
