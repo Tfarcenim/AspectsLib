@@ -22,13 +22,34 @@ public class AetherDensityCommand {
     private static final Identifier VITIUM_ASPECT = new Identifier("aspectslib", "vitium");
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
-        dispatcher.register(CommandManager.literal("aetherdensity")
+        dispatcher.register(CommandManager.literal("aspectslib:aether_density")
                 .requires(source -> source.hasPermissionLevel(0))
-                .executes(AetherDensityCommand::execute)
+                .executes(AetherDensityCommand::showUsage)
+                .then(CommandManager.literal("report")
+                        .executes(AetherDensityCommand::execute))
                 .then(CommandManager.literal("list")
                         .executes(AetherDensityCommand::listDensities))
                 .then(CommandManager.literal("corrupt")
                         .executes(context -> addCorruption(context, 10.0))));
+    }
+
+
+    private static int showUsage(CommandContext<ServerCommandSource> context) {
+        ServerCommandSource source = context.getSource();
+
+        if (source.getEntity() instanceof ServerPlayerEntity player) {
+            player.sendMessage(Text.literal("=== Aether Density Command Usage ===").formatted(Formatting.GOLD));
+            player.sendMessage(Text.literal("/aspectslib:aether_density report - Shows a detailed report of the current aether density").formatted(Formatting.YELLOW));
+            player.sendMessage(Text.literal("/aspectslib:aether_density list - Lists all loaded biome aether densities").formatted(Formatting.YELLOW));
+            player.sendMessage(Text.literal("/aspectslib:aether_density corrupt - Adds vitium corruption to the current biome").formatted(Formatting.YELLOW));
+        } else {
+            source.sendMessage(Text.literal("=== Aether Density Command Usage ===").formatted(Formatting.GOLD));
+            source.sendMessage(Text.literal("/aspectslib:aether_density report - Shows a detailed report of the current aether density").formatted(Formatting.YELLOW));
+            source.sendMessage(Text.literal("/aspectslib:aether_density list - Lists all loaded biome aether densities").formatted(Formatting.YELLOW));
+            source.sendMessage(Text.literal("/aspectslib:aether_density corrupt - Adds vitium corruption to the current biome").formatted(Formatting.YELLOW));
+        }
+
+        return 1;
     }
 
     private static int execute(CommandContext<ServerCommandSource> context) {
@@ -168,7 +189,7 @@ public class AetherDensityCommand {
             
             CorruptionManager.addCorruptionSource(biomeId, pos, 5);
             player.sendMessage(Text.literal("Added " + amount + " vitium corruption to biome: " + biomeId).formatted(Formatting.DARK_RED));
-            player.sendMessage(Text.literal("Use /aetherdensity to see the current state").formatted(Formatting.GRAY));
+            player.sendMessage(Text.literal("Use /aspectslib:aether_density report to see the current state").formatted(Formatting.GRAY));
             
             return 1;
         }
