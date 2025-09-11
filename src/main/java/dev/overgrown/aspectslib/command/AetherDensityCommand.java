@@ -1,6 +1,7 @@
 package dev.overgrown.aspectslib.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import dev.overgrown.aspectslib.aether.AetherDensity;
 import dev.overgrown.aspectslib.aether.AetherDensityManager;
@@ -30,7 +31,9 @@ public class AetherDensityCommand {
                 .then(CommandManager.literal("list")
                         .executes(AetherDensityCommand::listDensities))
                 .then(CommandManager.literal("corrupt")
-                        .executes(context -> addCorruption(context, 10.0))));
+                        .executes(context -> addCorruption(context, 10.0)) // Default to 10 if no argument provided
+                        .then(CommandManager.argument("amount", DoubleArgumentType.doubleArg(0))
+                                .executes(context -> addCorruption(context, DoubleArgumentType.getDouble(context, "amount"))))));
     }
 
 
@@ -41,12 +44,12 @@ public class AetherDensityCommand {
             player.sendMessage(Text.literal("=== Aether Density Command Usage ===").formatted(Formatting.GOLD));
             player.sendMessage(Text.literal("/aspectslib:aether_density report - Shows a detailed report of the current aether density").formatted(Formatting.YELLOW));
             player.sendMessage(Text.literal("/aspectslib:aether_density list - Lists all loaded biome aether densities").formatted(Formatting.YELLOW));
-            player.sendMessage(Text.literal("/aspectslib:aether_density corrupt - Adds vitium corruption to the current biome").formatted(Formatting.YELLOW));
+            player.sendMessage(Text.literal("/aspectslib:aether_density corrupt [<amount>] - Adds vitium corruption to the current biome (default 10)").formatted(Formatting.YELLOW));
         } else {
             source.sendMessage(Text.literal("=== Aether Density Command Usage ===").formatted(Formatting.GOLD));
             source.sendMessage(Text.literal("/aspectslib:aether_density report - Shows a detailed report of the current aether density").formatted(Formatting.YELLOW));
             source.sendMessage(Text.literal("/aspectslib:aether_density list - Lists all loaded biome aether densities").formatted(Formatting.YELLOW));
-            source.sendMessage(Text.literal("/aspectslib:aether_density corrupt - Adds vitium corruption to the current biome").formatted(Formatting.YELLOW));
+            source.sendMessage(Text.literal("/aspectslib:aether_density corrupt [<amount>] - Adds vitium corruption to the current biome (default 10)").formatted(Formatting.YELLOW));
         }
 
         return 1;
