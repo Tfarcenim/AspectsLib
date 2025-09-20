@@ -86,7 +86,7 @@ public class AuraNodeEntity extends Entity {
 
             // Check if node should die
             if (aspects.isEmpty()) {
-                this.discard();
+//                this.discard();
                 return;
             }
 
@@ -108,6 +108,10 @@ public class AuraNodeEntity extends Entity {
                 updateTrackedAspects();
             }
         }
+    }
+
+    public int getRenderColour() {
+        return 0xFFAA6655; // This a packed ARGB integer
     }
 
     private void regenerateAspects() {
