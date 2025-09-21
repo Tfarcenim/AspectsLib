@@ -1,0 +1,4 @@
+accessWidener v1 named
+
+accessible field net/minecraft/entity/SpawnRestriction RESTRICTIONS Ljava/util/Map;
+accessible class net/minecraft/entity/SpawnRestriction$Entry

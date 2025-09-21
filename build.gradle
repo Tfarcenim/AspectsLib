@@ -35,6 +35,13 @@ dependencies {
 	
 }
 
+loom{
+	def aw = file("src/main/resources/aspectslib.accesswidener")
+	if (aw.exists()) {
+		accessWidenerPath.set(aw)
+	}
+}
+
 processResources {
 	inputs.property "version", project.version
 

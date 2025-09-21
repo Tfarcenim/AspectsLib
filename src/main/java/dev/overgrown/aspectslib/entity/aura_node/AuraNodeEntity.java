@@ -4,8 +4,13 @@ import dev.overgrown.aspectslib.AspectsLib;
 import dev.overgrown.aspectslib.data.AspectData;
 import dev.overgrown.aspectslib.resonance.ResonanceCalculator;
 import dev.overgrown.aspectslib.aether.DynamicAetherDensityManager;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.WorldAccess;
 import net.minecraft.world.biome.Biome;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.entity.Entity;
@@ -559,6 +564,11 @@ public class AuraNodeEntity extends Entity {
 
         // Fallback to primal if nothing else available
         return !primal.isEmpty() ? primal.get(random.nextInt(primal.size())) : AspectsLib.identifier("aer");
+    }
+
+    public static boolean isValidNaturalSpawn(EntityType<? extends AuraNodeEntity> type,
+                                              WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        return true;//todo conditions
     }
 
     @Override

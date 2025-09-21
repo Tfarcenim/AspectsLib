@@ -7,18 +7,30 @@ import dev.overgrown.aspectslib.command.AetherDensityCommand;
 import dev.overgrown.aspectslib.data.AspectManager;
 import dev.overgrown.aspectslib.data.CustomItemTagManager;
 import dev.overgrown.aspectslib.data.EntityAspectManager;
+import dev.overgrown.aspectslib.entity.aura_node.AuraNodeEntity;
 import dev.overgrown.aspectslib.registry.ModEntities;
 import dev.overgrown.aspectslib.registry.ModItems;
 import dev.overgrown.aspectslib.resonance.ResonanceManager;
 import dev.overgrown.aspectslib.networking.SyncAspectIdentifierPacket;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.biome.v1.BiomeModifications;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnRestriction;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.biome.Biome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +60,8 @@ import org.slf4j.LoggerFactory;
 public class AspectsLib implements ModInitializer {
 	public static final String MOD_ID = "aspectslib";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
+	public static final TagKey<Biome> SPAWNS = TagKey.of(RegistryKeys.BIOME,identifier("spawns"));
 
 	/** Helper for creating namespaced identifiers */
 	public static Identifier identifier(String path) {
@@ -98,6 +112,13 @@ public class AspectsLib implements ModInitializer {
                 CorruptionManager.tick(world);
             }
         });
+
+
+		BiomeModifications.addSpawn(biome -> biome.getBiomeRegistryEntry().isIn(SPAWNS), SpawnGroup.MONSTER,
+				ModEntities.AURA_NODE, 1000, 1, 1);
+		SpawnRestriction.RESTRICTIONS.put(ModEntities.AURA_NODE,new SpawnRestriction.Entry(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES,//does this need a custom enum?
+                SpawnRestriction.Location.NO_RESTRICTIONS, (type, world, spawnReason, pos, random) -> AuraNodeEntity.isValidNaturalSpawn(
+                                (EntityType<? extends AuraNodeEntity>)(Object) type, world, spawnReason, pos, random)));
 
 		LOGGER.info("AspectsLib initialized!");
 	}
